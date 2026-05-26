@@ -1,0 +1,18 @@
+Hola {{ booking.attendee_name }},
+
+Tu reserva de sala ha sido modificada. Estos son los detalles actualizados:
+
+  Sala:    {{ booking.room }}
+  Motivo:  {{ booking.title }}
+  Inicio:  {{ booking.start_datetime|date:"l d \d\e N \d\e Y" }} a las {{ booking.start_datetime|time:"H:i" }}
+  Fin:     {{ booking.end_datetime|date:"l d \d\e N \d\e Y" }} a las {{ booking.end_datetime|time:"H:i" }}
+{% if booking.notes %}
+  Notas:   {{ booking.notes }}
+{% endif %}{% if extras_labels %}
+  Servicios solicitados:{% for label in extras_labels %}
+    · {{ label }}{% endfor %}
+{% endif %}
+Si tienes alguna consulta, comunícate con recepción.
+
+Saludos,
+Irritec Chile SA.

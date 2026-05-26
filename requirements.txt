@@ -1,4 +1,8 @@
 asgiref==3.11.1
 django==5.2.14
+greenlet==3.5.1
+playwright==1.60.0
+pyee==13.0.1
+python-dotenv==1.2.2
 sqlparse==0.5.5
 typing-extensions==4.15.0

@@ -1,0 +1,15 @@
+Hola {{ booking.attendee_name }},
+
+Tu reserva de sala ha sido cancelada.
+
+Detalles de la reserva cancelada:
+
+  Sala:    {{ booking.room }}
+  Motivo:  {{ booking.title }}
+  Fecha:   {{ booking.start_datetime|date:"l d \d\e N \d\e Y" }}
+  Horario: {{ booking.start_datetime|time:"H:i" }} – {{ booking.end_datetime|time:"H:i" }}
+
+Si crees que esto es un error o necesitas reagendar, comunícate con recepción.
+
+Saludos,
+Irritec Chile SA.
