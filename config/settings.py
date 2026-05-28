@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'anymail',
     'rooms',
 ]
 
@@ -92,14 +93,14 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 COMPANY_NAME = os.environ.get('COMPANY_NAME', 'Tu Empresa')
 
-# --- Email (Mailchimp / Mandrill SMTP) ---
+# --- Email ---
 EMAIL_BACKEND = os.environ.get(
     'EMAIL_BACKEND',
-    'django.core.mail.backends.console.EmailBackend'
+    'django.core.mail.backends.console.EmailBackend'  # dev: imprime en terminal
 )
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.mandrillapp.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'reservas@tuempresa.com')
+
+# Anymail (Mandrill HTTP API — evita bloqueos de puerto SMTP en producción)
+ANYMAIL = {
+    'MANDRILL_API_KEY': os.environ.get('MANDRILL_API_KEY', ''),
+}

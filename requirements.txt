@@ -2,16 +2,27 @@
 #    uv pip compile pyproject.toml -o requirements.txt
 asgiref==3.11.1
     # via django
+certifi==2026.5.20
+    # via requests
+charset-normalizer==3.4.7
+    # via requests
 dj-database-url==3.1.2
     # via app-meetingroom (pyproject.toml)
 django==5.2.14
     # via
     #   app-meetingroom (pyproject.toml)
     #   dj-database-url
+    #   django-anymail
+django-anymail==15.0
+    # via app-meetingroom (pyproject.toml)
 greenlet==3.5.1
     # via playwright
 gunicorn==26.0.0
     # via app-meetingroom (pyproject.toml)
+idna==3.17
+    # via
+    #   django-anymail
+    #   requests
 packaging==26.2
     # via gunicorn
 playwright==1.60.0
@@ -22,11 +33,18 @@ pyee==13.0.1
     # via playwright
 python-dotenv==1.2.2
     # via app-meetingroom (pyproject.toml)
+requests==2.34.2
+    # via django-anymail
 sqlparse==0.5.5
     # via django
 typing-extensions==4.15.0
     # via
     #   asgiref
+    #   django-anymail
     #   pyee
+urllib3==2.7.0
+    # via
+    #   django-anymail
+    #   requests
 whitenoise==6.12.0
     # via app-meetingroom (pyproject.toml)
