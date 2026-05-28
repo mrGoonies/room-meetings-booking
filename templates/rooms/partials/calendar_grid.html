@@ -1,20 +1,19 @@
-<!-- Date navigation -->
+<!-- ── Navegación de fecha ── -->
 <div class="flex flex-col gap-3 mb-5">
 
-  <!-- Fila superior: título + controles de día -->
-  <div class="flex items-center justify-between flex-wrap gap-2">
-    <div class="flex items-center gap-3">
-      <h2 class="text-lg font-semibold text-gray-900">{{ date_display }}</h2>
+  <!-- Fila 1: título + selector de fecha -->
+  <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2 min-w-0">
+      <h2 class="text-base sm:text-lg font-semibold text-gray-900 truncate">{{ date_display }}</h2>
       {% if is_today %}
-      <span class="bg-brand-50 text-brand text-xs px-2 py-0.5 rounded-full font-medium">Hoy</span>
+      <span class="bg-brand-50 text-brand text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0">Hoy</span>
       {% endif %}
     </div>
-    <div class="flex items-center gap-2">
-      <!-- Selector directo de fecha -->
+    <div class="flex items-center gap-2 flex-shrink-0">
       <input type="date"
              name="date"
              value="{{ selected_date|date:'Y-m-d' }}"
-             class="h-8 text-sm border border-gray-200 rounded-lg px-2 text-gray-500
+             class="h-9 text-sm border border-gray-200 rounded-lg px-2 text-gray-500
                     focus:outline-none focus:ring-2 focus:ring-brand cursor-pointer"
              hx-get="{% url 'rooms:calendar' %}"
              hx-target="#calendar-content"
@@ -22,77 +21,150 @@
              hx-trigger="change"
              hx-push-url="true"
              title="Ir a fecha">
-      <div class="h-5 w-px bg-gray-200"></div>
-      <button
-        class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-500 text-xl leading-none transition-colors"
-        hx-get="{% url 'rooms:calendar' %}?date={{ prev_date }}"
-        hx-target="#calendar-content"
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        title="Día anterior">‹</button>
-      <button
-        class="px-3 h-8 text-sm rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-500 transition-colors"
-        hx-get="{% url 'rooms:calendar' %}"
-        hx-target="#calendar-content"
-        hx-swap="innerHTML"
-        hx-push-url="true">Hoy</button>
-      <button
-        class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-500 text-xl leading-none transition-colors"
-        hx-get="{% url 'rooms:calendar' %}?date={{ next_date }}"
-        hx-target="#calendar-content"
-        hx-swap="innerHTML"
-        hx-push-url="true"
-        title="Día siguiente">›</button>
+      <!-- Botones día anterior/hoy/siguiente — solo desktop -->
+      <div class="hidden sm:flex items-center gap-1">
+        <div class="h-5 w-px bg-gray-200"></div>
+        <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200
+                       hover:bg-gray-100 text-gray-500 text-xl leading-none transition-colors"
+          hx-get="{% url 'rooms:calendar' %}?date={{ prev_date }}"
+          hx-target="#calendar-content" hx-swap="innerHTML" hx-push-url="true"
+          title="Día anterior">‹</button>
+        <button class="px-3 h-8 text-sm rounded-lg border border-gray-200
+                       hover:bg-gray-100 text-gray-500 transition-colors"
+          hx-get="{% url 'rooms:calendar' %}"
+          hx-target="#calendar-content" hx-swap="innerHTML" hx-push-url="true">Hoy</button>
+        <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200
+                       hover:bg-gray-100 text-gray-500 text-xl leading-none transition-colors"
+          hx-get="{% url 'rooms:calendar' %}?date={{ next_date }}"
+          hx-target="#calendar-content" hx-swap="innerHTML" hx-push-url="true"
+          title="Día siguiente">›</button>
+      </div>
     </div>
   </div>
 
-  <!-- Tira semanal con navegación por semana -->
+  <!-- Fila 2: tira semanal -->
   <div class="flex items-center gap-1">
-    <button
-      class="w-7 h-14 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-400 text-lg leading-none transition-colors flex-shrink-0"
+    <button class="w-8 h-14 flex items-center justify-center rounded-lg border border-gray-200
+                   hover:bg-gray-100 text-gray-400 text-lg leading-none transition-colors flex-shrink-0"
       hx-get="{% url 'rooms:calendar' %}?date={{ prev_week }}"
-      hx-target="#calendar-content"
-      hx-swap="innerHTML"
-      hx-push-url="true"
+      hx-target="#calendar-content" hx-swap="innerHTML" hx-push-url="true"
       title="Semana anterior">‹</button>
 
     {% for day in week_days %}
-    <button
-      class="flex-1 flex flex-col items-center py-1.5 rounded-lg transition-colors border
-             {% if day.is_selected %}
-               bg-brand text-white border-brand
-             {% elif day.is_today %}
-               bg-brand-50 text-brand border-brand-100
-             {% else %}
-               hover:bg-gray-50 text-gray-600 border-gray-200
-             {% endif %}"
+    <button class="flex-1 flex flex-col items-center py-2 rounded-lg transition-colors border
+                   {% if day.is_selected %}bg-brand text-white border-brand
+                   {% elif day.is_today %}bg-brand-50 text-brand border-brand-100
+                   {% else %}hover:bg-gray-50 text-gray-600 border-gray-200{% endif %}"
       hx-get="{% url 'rooms:calendar' %}?date={{ day.date_iso }}"
-      hx-target="#calendar-content"
-      hx-swap="innerHTML"
-      hx-push-url="true">
+      hx-target="#calendar-content" hx-swap="innerHTML" hx-push-url="true">
       <span class="text-xs font-medium leading-tight">{{ day.day_abbr }}</span>
-      <span class="text-base font-bold leading-tight">{{ day.day_num }}</span>
+      <span class="text-sm font-bold leading-tight">{{ day.day_num }}</span>
     </button>
     {% endfor %}
 
-    <button
-      class="w-7 h-14 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-400 text-lg leading-none transition-colors flex-shrink-0"
+    <button class="w-8 h-14 flex items-center justify-center rounded-lg border border-gray-200
+                   hover:bg-gray-100 text-gray-400 text-lg leading-none transition-colors flex-shrink-0"
       hx-get="{% url 'rooms:calendar' %}?date={{ next_week }}"
-      hx-target="#calendar-content"
-      hx-swap="innerHTML"
-      hx-push-url="true"
+      hx-target="#calendar-content" hx-swap="innerHTML" hx-push-url="true"
       title="Semana siguiente">›</button>
   </div>
 
 </div>
 
-<!-- Calendar grid -->
-<div class="overflow-y-auto rounded-xl" style="max-height: calc(100vh - 290px)">
+<!-- ══════════════════════════════════════
+     MÓVIL — Vista de lista por sala
+     ══════════════════════════════════════ -->
+<div class="sm:hidden space-y-3">
+
+  {% for room_data in rooms_data %}
+  <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+
+    <!-- Cabecera sala -->
+    <div class="flex items-center justify-between px-4 py-3"
+         style="background-color: {{ room_data.color }}">
+      <span class="text-white font-semibold text-sm">{{ room_data.room.name }}</span>
+      {% if room_data.room.capacity %}
+      <span class="text-white text-xs opacity-75 bg-black/10 px-2 py-0.5 rounded-full">
+        {{ room_data.room.capacity }} personas
+      </span>
+      {% endif %}
+    </div>
+
+    <!-- Lista de reservas -->
+    {% if room_data.bookings %}
+    <div class="divide-y divide-gray-100">
+      {% for booking in room_data.bookings %}
+
+      {% if user.is_staff %}
+      <a href="{% url 'rooms:booking_edit' booking.obj.pk %}"
+         class="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+      {% else %}
+      <div class="flex items-center gap-3 px-4 py-3.5">
+      {% endif %}
+
+        <!-- Franja horaria -->
+        <div class="flex-shrink-0 w-14 text-center">
+          <p class="text-xs font-bold tabular-nums" style="color: {{ room_data.color }}">
+            {{ booking.start_str }}
+          </p>
+          <p class="text-xs text-gray-300 tabular-nums leading-tight">{{ booking.end_str }}</p>
+        </div>
+
+        <!-- Separador vertical -->
+        <div class="w-px self-stretch rounded-full flex-shrink-0" style="background-color: {{ room_data.color }}; opacity: 0.3;"></div>
+
+        <!-- Detalle reserva -->
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-gray-900 truncate">{{ booking.obj.title }}</p>
+          <p class="text-xs text-gray-400 truncate mt-0.5">{{ booking.obj.attendee_name }}</p>
+        </div>
+
+        {% if user.is_staff %}
+        <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+        {% endif %}
+
+      {% if user.is_staff %}</a>{% else %}</div>{% endif %}
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Sin reservas -->
+    <div class="flex flex-col items-center justify-center py-8 gap-1.5">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center"
+           style="background-color: {{ room_data.color }}1A">
+        <svg class="w-4 h-4" style="color: {{ room_data.color }}" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <p class="text-xs text-gray-400">Disponible todo el día</p>
+    </div>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+
+  {% if not rooms_data %}
+  <div class="text-center py-16 text-gray-400 text-sm">
+    No hay salas activas configuradas.
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- ══════════════════════════════════════
+     DESKTOP — Grid visual por columnas
+     ══════════════════════════════════════ -->
+<div class="hidden sm:block overflow-y-auto rounded-xl" style="max-height: calc(100vh - 290px)">
   <div class="flex gap-3">
 
-    <!-- Time labels column -->
+    <!-- Columna de horas -->
     <div class="w-14 flex-shrink-0 flex flex-col">
-      <div class="h-10"></div><!-- spacer para alinear con los headers de sala -->
+      <div class="h-10"></div>
       <div class="relative" style="height: {{ grid_height }}px">
         {% for hour in hours %}
         <div class="absolute right-1 text-xs text-gray-400 select-none leading-none"
@@ -101,11 +173,10 @@
       </div>
     </div>
 
-    <!-- Room columns -->
+    <!-- Columnas por sala -->
     {% for room_data in rooms_data %}
     <div class="flex-1 min-w-0 flex flex-col">
 
-      <!-- Room header -->
       <div class="h-10 flex items-center justify-center gap-1 rounded-t-xl text-sm font-semibold text-white px-3 flex-shrink-0"
            style="background-color: {{ room_data.color }}">
         {{ room_data.room.name }}
@@ -114,24 +185,20 @@
         {% endif %}
       </div>
 
-      <!-- Room grid -->
       <div class="relative bg-white border border-gray-200 border-t-0 overflow-hidden rounded-b-xl"
            style="height: {{ grid_height }}px">
 
-        <!-- Hour lines -->
         {% for hour in hours %}
         <div class="absolute w-full border-t {% if forloop.first %}border-gray-200{% else %}border-gray-100{% endif %}"
              style="top: {{ hour.top }}px"></div>
         {% endfor %}
 
-        <!-- Empty state -->
         {% if not room_data.bookings %}
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
           <p class="text-xs text-gray-200 select-none">Sin reservas</p>
         </div>
         {% endif %}
 
-        <!-- Booking cards -->
         {% for booking in room_data.bookings %}
         {% if user.is_staff %}
         <a href="{% url 'rooms:booking_edit' booking.obj.pk %}"
@@ -156,7 +223,6 @@
     </div>
     {% endfor %}
 
-    <!-- Empty state: no rooms configured -->
     {% if not rooms_data %}
     <div class="flex-1 flex items-center justify-center py-24 text-gray-400 text-sm">
       No hay salas activas configuradas.
