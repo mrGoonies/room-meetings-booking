@@ -92,6 +92,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 COMPANY_NAME = os.environ.get('COMPANY_NAME', 'Tu Empresa')
+RECEPTION_EMAIL = os.environ.get('RECEPTION_EMAIL', '')
 
 # --- Email ---
 EMAIL_BACKEND = os.environ.get(

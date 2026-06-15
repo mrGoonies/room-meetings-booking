@@ -41,11 +41,10 @@
 
       <!-- Acciones -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-brand bg-brand-50 px-2.5 py-1 rounded-full">
-          <span class="w-1.5 h-1.5 rounded-full bg-brand inline-block"></span>
-          <span class="hidden sm:inline">Solo lectura</span>
-          <span class="sm:hidden">Viewer</span>
-        </span>
+        <a href="{% url 'rooms:booking_create' %}"
+           class="bg-brand text-white text-sm px-3 py-1.5 rounded-lg hover:bg-brand-dark transition-colors font-medium whitespace-nowrap">
+          + Nueva reserva
+        </a>
         <div class="h-4 w-px bg-gray-200"></div>
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}

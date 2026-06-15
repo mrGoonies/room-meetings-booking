@@ -7,7 +7,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from .models import Room, Booking, EXTRAS_GROUPS
 from .forms import BookingForm
-from .emails import send_booking_update, send_booking_cancellation
+from .emails import send_booking_update, send_booking_cancellation, send_reception_notification
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ def calendar_view(request):
     return render(request, template, context)
 
 
-@staff_member_required
+@login_required
 def booking_create(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
@@ -118,6 +118,7 @@ def booking_create(request):
                 attendee_name=form.cleaned_data['attendee_name'],
                 attendee_email=form.cleaned_data['attendee_email'],
                 title=form.cleaned_data['title'],
+                num_attendees=form.cleaned_data.get('num_attendees', 1),
                 start_datetime=form.cleaned_data['start_datetime'],
                 end_datetime=form.cleaned_data['end_datetime'],
                 notes=form.cleaned_data.get('notes', ''),
@@ -125,6 +126,10 @@ def booking_create(request):
                 created_by=request.user,
             )
             booking.save()
+            try:
+                send_reception_notification(booking, event='nueva')
+            except Exception:
+                logger.exception('Error enviando notificación a recepción para reserva pk=%s', booking.pk)
             redirect_date = form.cleaned_data['date'].isoformat()
             return redirect(f'/?date={redirect_date}')
     else:
@@ -133,6 +138,9 @@ def booking_create(request):
         initial = {'date': initial_date}
         if initial_room:
             initial['room'] = initial_room
+        if not request.user.is_staff:
+            initial['attendee_name'] = request.user.get_full_name() or request.user.username
+            initial['attendee_email'] = request.user.email
         form = BookingForm(initial=initial)
 
     return render(request, 'rooms/booking_form.html', {'form': form, 'extras_groups': EXTRAS_GROUPS})
@@ -151,6 +159,7 @@ def booking_edit(request, pk):
             booking.title = form.cleaned_data['title']
             booking.start_datetime = form.cleaned_data['start_datetime']
             booking.end_datetime = form.cleaned_data['end_datetime']
+            booking.num_attendees = form.cleaned_data.get('num_attendees', 1)
             booking.notes = form.cleaned_data.get('notes', '')
             booking.extras = form.cleaned_data.get('extras', [])
             booking.save()
@@ -158,6 +167,10 @@ def booking_edit(request, pk):
                 send_booking_update(booking)
             except Exception:
                 logger.exception('Error enviando email de modificación para reserva pk=%s', booking.pk)
+            try:
+                send_reception_notification(booking, event='modificada')
+            except Exception:
+                logger.exception('Error enviando notificación a recepción (modificación) para reserva pk=%s', booking.pk)
             return redirect(f'/?date={form.cleaned_data["date"].isoformat()}')
     else:
         local_start = timezone.localtime(booking.start_datetime)
@@ -174,6 +187,7 @@ def booking_edit(request, pk):
                 'end_time': local_end.time(),
                 'notes': booking.notes,
             'extras': booking.extras,
+            'num_attendees': booking.num_attendees,
             },
         )
 
@@ -195,6 +209,10 @@ def booking_delete(request, pk):
             send_booking_cancellation(booking)
         except Exception:
             logger.exception('Error enviando email de cancelación para reserva pk=%s', booking.pk)
+        try:
+            send_reception_notification(booking, event='cancelada')
+        except Exception:
+            logger.exception('Error enviando notificación a recepción (cancelación) para reserva pk=%s', booking.pk)
         booking.delete()
         return redirect(f'/?date={redirect_date}')
     return redirect('rooms:calendar')

@@ -39,12 +39,10 @@
 
     {% if user.is_authenticated %}
     <div class="flex items-center gap-4">
-      {% if user.is_staff %}
       <a href="{% url 'rooms:booking_create' %}"
          class="bg-brand text-white text-sm px-4 py-1.5 rounded-lg hover:bg-brand-dark transition-colors font-medium">
         + Nueva reserva
       </a>
-      {% endif %}
       <div class="h-5 w-px bg-gray-200"></div>
       <span class="text-sm text-gray-500 hidden sm:block">
         {{ user.get_full_name|default:user.username }}

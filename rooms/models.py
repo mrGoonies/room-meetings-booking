@@ -82,6 +82,7 @@ class Booking(models.Model):
         choices=Status.choices,
         default=Status.CONFIRMED,
     )
+    num_attendees = models.PositiveSmallIntegerField('Cantidad de asistentes', default=1)
     notes = models.TextField('Notas', blank=True)
     extras = models.JSONField('Servicios adicionales', default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

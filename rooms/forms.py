@@ -18,6 +18,12 @@ class BookingForm(forms.Form):
     attendee_name = forms.CharField(label='Nombre completo', max_length=200)
     attendee_email = forms.EmailField(label='Correo electrónico')
     title = forms.CharField(label='Motivo / Título', max_length=200)
+    num_attendees = forms.IntegerField(
+        label='Cantidad de asistentes',
+        min_value=1,
+        initial=1,
+        widget=forms.NumberInput(attrs={'min': '1'}),
+    )
     date = forms.DateField(
         label='Fecha',
         widget=forms.DateInput(attrs={'type': 'date'}),
