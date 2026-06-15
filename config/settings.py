@@ -11,7 +11,17 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-tc$+zfi$a$d!it#r4fa7a
 
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else []
+ALLOWED_HOSTS = [
+    h.strip()
+    for h in os.environ.get('ALLOWED_HOSTS', '').split(',')
+    if h.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if o.strip()
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -58,6 +68,7 @@ DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
@@ -73,7 +84,7 @@ TIME_ZONE = 'America/Mexico_City'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
@@ -91,17 +102,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
-COMPANY_NAME = os.environ.get('COMPANY_NAME', 'Tu Empresa')
+# ── Seguridad en producción ───────────────────────────────────────────────────
+# Render termina SSL en su proxy y reenvía con X-Forwarded-Proto
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT            = True
+    SECURE_HSTS_SECONDS            = 31536000   # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD            = True
+    SESSION_COOKIE_SECURE          = True
+    CSRF_COOKIE_SECURE             = True
+
+# ── Negocio ───────────────────────────────────────────────────────────────────
+COMPANY_NAME    = os.environ.get('COMPANY_NAME', 'Tu Empresa')
 RECEPTION_EMAIL = os.environ.get('RECEPTION_EMAIL', '')
 
-# --- Email ---
+# ── Email (Anymail / Mandrill HTTP API) ───────────────────────────────────────
 EMAIL_BACKEND = os.environ.get(
     'EMAIL_BACKEND',
-    'django.core.mail.backends.console.EmailBackend'  # dev: imprime en terminal
+    'django.core.mail.backends.console.EmailBackend',  # dev: imprime en terminal
 )
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'reservas@tuempresa.com')
 
-# Anymail (Mandrill HTTP API — evita bloqueos de puerto SMTP en producción)
 ANYMAIL = {
     'MANDRILL_API_KEY': os.environ.get('MANDRILL_API_KEY', ''),
 }
