@@ -23,14 +23,6 @@ services:
           name: meetingroom-db
           property: connectionString
 
-      # ── Admin inicial ────────────────────────────────────────────────────────
-      - key: DJANGO_ADMIN_USER
-        value: admin
-      - key: DJANGO_ADMIN_EMAIL
-        value: "admin@irritec.com"
-      - key: DJANGO_ADMIN_PASSWORD
-        generateValue: true
-
       # ── Negocio ──────────────────────────────────────────────────────────────
       - key: COMPANY_NAME
         value: "Irritec"
