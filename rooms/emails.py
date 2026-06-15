@@ -17,7 +17,7 @@ EXTRAS_MATERIALS_KEYS = {'decoracion', 'papeleria', 'impresiones'}
 
 JEFATURA_MAP = {
     'comercial':      'german.hermosilla@irritec.com',
-    'operaciones':    'ivan.bahamondes@irritec.com',
+    'operaciones':    '',
     'administracion': 'rudy.vasquez@irritec.com',
     'gerencia':       '',
 }
