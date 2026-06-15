@@ -19,7 +19,7 @@ JEFATURA_MAP = {
     'comercial':      'german.hermosilla@irritec.com',
     'operaciones':    'ivan.bahamondes@irritec.com',
     'administracion': 'rudy.vasquez@irritec.com',
-    'gerencia':       'sergio.cornu@irritec.com',
+    'gerencia':       '',
 }
 
 
