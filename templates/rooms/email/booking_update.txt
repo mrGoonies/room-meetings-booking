@@ -12,7 +12,7 @@ Tu reserva de sala ha sido modificada. Estos son los detalles actualizados:
   Servicios solicitados:{% for label in extras_labels %}
     · {{ label }}{% endfor %}
 {% endif %}
-Si tienes alguna consulta, comunícate con recepción.
+Si tienes alguna consulta, comunícate con recepción (recepcion.chile@irritec.com)
 
 Saludos,
 Irritec Chile SA.

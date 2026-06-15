@@ -15,7 +15,7 @@ Detalles de la reserva:
 {% endif %}
 Agendado por: Recepción
 
-Si tienes alguna duda, comunícate con recepción.
+Si tienes alguna duda, comunícate con recepción (recepcion.chile@irritec.com).
 
 Saludos,
 Irritec Chile SA.

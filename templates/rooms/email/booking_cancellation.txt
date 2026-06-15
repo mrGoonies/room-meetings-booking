@@ -9,7 +9,7 @@ Detalles de la reserva cancelada:
   Fecha:   {{ booking.start_datetime|date:"l d \d\e N \d\e Y" }}
   Horario: {{ booking.start_datetime|time:"H:i" }} – {{ booking.end_datetime|time:"H:i" }}
 
-Si crees que esto es un error o necesitas reagendar, comunícate con recepción.
+Si crees que esto es un error o necesitas reagendar, comunícate con recepción al correo recepcion.chile@irritec.com
 
 Saludos,
 Irritec Chile SA.
