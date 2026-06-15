@@ -1,0 +1,37 @@
+Nueva reserva de sala — {{ company_name }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DETALLE DE LA RESERVA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Sala:        {{ booking.room }}
+  Fecha:       {{ booking.start_datetime|date:"l d \d\e N \d\e Y" }}
+  Horario:     {{ booking.start_datetime|time:"H:i" }} – {{ booking.end_datetime|time:"H:i" }}
+  Motivo:      {{ booking.title }}
+  Asistentes:  {{ booking.num_attendees }} persona{% if booking.num_attendees != 1 %}s{% endif %}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SOLICITANTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Nombre:      {{ booking.attendee_name }}
+  Correo:      {{ booking.attendee_email }}
+  Agendado por: {{ booking.created_by.get_full_name|default:booking.created_by.username }}
+
+{% if extras_labels %}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SERVICIOS SOLICITADOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{% for label in extras_labels %}
+  · {{ label }}
+{% endfor %}
+{% endif %}
+{% if booking.notes %}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OBSERVACIONES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  {{ booking.notes }}
+{% endif %}
+
+{{ company_name }}

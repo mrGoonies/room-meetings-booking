@@ -8,6 +8,20 @@ from .models import EXTRAS_MAP
 logger = logging.getLogger(__name__)
 COMPANY_NAME = getattr(settings, 'COMPANY_NAME', 'Tu Empresa')
 
+# ── Emails por área ───────────────────────────────────────────────────────────
+EQUIPMENT_EMAIL = 'soporte2.chile@irritec.com'
+MATERIALS_EMAIL = 'marketing.chile@irritec.com'
+
+EXTRAS_EQUIPMENT_KEYS = {'proyector', 'videoconferencia', 'pizarron'}
+EXTRAS_MATERIALS_KEYS = {'decoracion', 'papeleria', 'impresiones'}
+
+JEFATURA_MAP = {
+    'comercial':      'german.hermosilla@irritec.com',
+    'operaciones':    'ivan.bahamondes@irritec.com',
+    'administracion': 'rudy.vasquez@irritec.com',
+    'gerencia':       'sergio.cornu@irritec.com',
+}
+
 
 def _send(subject, template, booking, recipient=None):
     target = recipient or booking.attendee_email
@@ -60,6 +74,51 @@ def send_booking_cancellation(booking):
         template='rooms/email/booking_cancellation.txt',
         booking=booking,
     )
+
+
+# ── Notificaciones por área y jefatura ───────────────────────────────────────
+
+def send_extras_notifications(booking):
+    """Notifica a soporte2 (equipamiento) y marketing (materiales) según extras."""
+    extras = set(booking.extras or [])
+
+    if extras & EXTRAS_EQUIPMENT_KEYS:
+        _send(
+            subject=f'[Soporte] Equipamiento requerido: {booking.room} — {booking.start_datetime:%d/%m/%Y %H:%M}',
+            template='rooms/email/area_notification.txt',
+            booking=booking,
+            recipient=EQUIPMENT_EMAIL,
+        )
+
+    if extras & EXTRAS_MATERIALS_KEYS:
+        _send(
+            subject=f'[Marketing] Materiales requeridos: {booking.room} — {booking.start_datetime:%d/%m/%Y %H:%M}',
+            template='rooms/email/area_notification.txt',
+            booking=booking,
+            recipient=MATERIALS_EMAIL,
+        )
+
+
+def send_jefatura_notification(booking):
+    """Notifica al jefe del área del usuario que agendó. Omite si el usuario es el propio jefe."""
+    user = booking.created_by
+    user_group_names = set(user.groups.values_list('name', flat=True))
+
+    for group_name, jefatura_email in JEFATURA_MAP.items():
+        if group_name in user_group_names:
+            if user.email.lower() == jefatura_email.lower():
+                logger.info(
+                    'Notificación de jefatura omitida — el usuario es el jefe de su grupo (%s)',
+                    group_name,
+                )
+                return
+            _send(
+                subject=f'Nueva reserva de sala: {booking.room} — {booking.start_datetime:%d/%m/%Y %H:%M}',
+                template='rooms/email/area_notification.txt',
+                booking=booking,
+                recipient=jefatura_email,
+            )
+            return
 
 
 # ── Notificaciones a recepción ────────────────────────────────────────────────

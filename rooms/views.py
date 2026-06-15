@@ -7,7 +7,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from .models import Room, Booking, EXTRAS_GROUPS
 from .forms import BookingForm
-from .emails import send_booking_update, send_booking_cancellation, send_reception_notification
+from .emails import (
+    send_booking_update, send_booking_cancellation, send_reception_notification,
+    send_extras_notifications, send_jefatura_notification,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -130,6 +133,14 @@ def booking_create(request):
                 send_reception_notification(booking, event='nueva')
             except Exception:
                 logger.exception('Error enviando notificación a recepción para reserva pk=%s', booking.pk)
+            try:
+                send_extras_notifications(booking)
+            except Exception:
+                logger.exception('Error enviando notificaciones de área para reserva pk=%s', booking.pk)
+            try:
+                send_jefatura_notification(booking)
+            except Exception:
+                logger.exception('Error enviando notificación a jefatura para reserva pk=%s', booking.pk)
             redirect_date = form.cleaned_data['date'].isoformat()
             return redirect(f'/?date={redirect_date}')
     else:
